@@ -15,12 +15,10 @@ function App() {
   const handleScan = (codes: IDetectedBarcode[]) => {
     if (codes.length > 0) {
       const value = codes[0].rawValue;
-      if (value !== lastScan) {
-        setLastScan(value);
-        setHistory((prev) => [value, ...prev]);
-        playBeep();
-        setShowScanner(false); // tutup setelah scan
-      }
+      setLastScan(value);
+      setHistory((prev) => [value, ...prev]);
+      playBeep();
+      setShowScanner(false); // langsung close tanpa cek duplikat
     }
   };
 
@@ -30,10 +28,15 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-      <h1 className="text-xl font-bold mb-4 text-blue-700">QR Scanner Demo 📷</h1>
+      <h1 className="text-xl font-bold mb-4 text-blue-700">
+        QR Scanner Demo 📷
+      </h1>
 
       <button
-        onClick={() => setShowScanner(true)}
+        onClick={() => {
+          setLastScan(""); // reset supaya bisa close lagi
+          setShowScanner(true); // buka scanner
+        }}
         className="mb-4 w-full max-w-xs px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-lg font-medium"
       >
         Buka Scanner
@@ -73,7 +76,9 @@ function App() {
 
       {/* History */}
       <div className="mt-4 p-4 w-full max-w-md bg-white rounded-lg shadow">
-        <h2 className="font-semibold text-gray-700 mb-2 text-lg">History Scan</h2>
+        <h2 className="font-semibold text-gray-700 mb-2 text-lg">
+          History Scan
+        </h2>
         {history.length === 0 ? (
           <p className="text-gray-500">Belum ada hasil</p>
         ) : (
